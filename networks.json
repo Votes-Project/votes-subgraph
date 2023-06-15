@@ -1,0 +1,16 @@
+{
+  "goerli": {
+    "Auction": {
+      "address": "0x27C4ae0477011F993a411032ae3bE38A64ebb113",
+      "startBlock": 9185129
+    },
+    "Questions": {
+      "address": "0xA68d1A38FAADEab81cB7126fa7055Ee2D9546010",
+      "startBlock": 9185135
+    },
+    "Votes": {
+      "address": "0xA237b3cC022F70B45AFdbe62EdF9C12ac36932F8",
+      "startBlock": 9185120
+    }
+  }
+}
