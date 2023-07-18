@@ -131,7 +131,7 @@ type Unpaused @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
-type Edited @entity(immutable: true) {
+type QuestionEdited @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
@@ -148,37 +148,7 @@ type Locked @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
-type QuestionsRoleAdminChanged @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  previousAdminRole: Bytes! # bytes32
-  newAdminRole: Bytes! # bytes32
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type QuestionsRoleGranted @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type QuestionsRoleRevoked @entity(immutable: true) {
-  id: Bytes!
-  role: Bytes! # bytes32
-  account: Bytes! # address
-  sender: Bytes! # address
-  blockNumber: BigInt!
-  blockTimestamp: BigInt!
-  transactionHash: Bytes!
-}
-
-type Submitted @entity(immutable: true) {
+type QuestionSubmitted @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
