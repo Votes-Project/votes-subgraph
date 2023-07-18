@@ -65,44 +65,6 @@ dataSources:
           handler: handleUnpaused
       file: ./src/auction.ts
   - kind: ethereum
-    name: Questions
-    network: goerli
-    source:
-      address: "0xA68d1A38FAADEab81cB7126fa7055Ee2D9546010"
-      abi: Questions
-      startBlock: 9185135
-    mapping:
-      kind: ethereum/events
-      apiVersion: 0.0.7
-      language: wasm/assemblyscript
-      entities:
-        - Edited
-        - Locked
-        - QuestionsRoleAdminChanged
-        - QuestionsRoleGranted
-        - QuestionsRoleRevoked
-        - Submitted
-        - Unlocked
-      abis:
-        - name: Questions
-          file: ./abis/Questions.json
-      eventHandlers:
-        - event: Edited(indexed uint256,bytes)
-          handler: handleEdited
-        - event: Locked(indexed uint256)
-          handler: handleLocked
-        - event: RoleAdminChanged(indexed bytes32,indexed bytes32,indexed bytes32)
-          handler: handleRoleAdminChanged
-        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
-          handler: handleRoleGranted
-        - event: RoleRevoked(indexed bytes32,indexed address,indexed address)
-          handler: handleRoleRevoked
-        - event: Submitted(indexed uint256,bytes)
-          handler: handleSubmitted
-        - event: Unlocked(indexed uint256)
-          handler: handleUnlocked
-      file: ./src/questions.ts
-  - kind: ethereum
     name: Votes
     network: goerli
     source:
@@ -143,3 +105,32 @@ dataSources:
         - event: Transfer(indexed address,indexed address,indexed uint256)
           handler: handleTransfer
       file: ./src/votes.ts
+  - kind: ethereum
+    name: Questions
+    network: goerli
+    source:
+      address: "0xA22f7804C788272960F0B3E3Cfe2A139418D266e"
+      abi: Questions
+      startBlock: 9341259
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - Locked
+        - QuestionEdited
+        - QuestionSubmitted
+        - Unlocked
+      abis:
+        - name: Questions
+          file: ./abis/Questions.json
+      eventHandlers:
+        - event: Locked(indexed uint256)
+          handler: handleLocked
+        - event: QuestionEdited(indexed uint256,bytes)
+          handler: handleQuestionEdited
+        - event: QuestionSubmitted(indexed uint256,bytes)
+          handler: handleQuestionSubmitted
+        - event: Unlocked(indexed uint256)
+          handler: handleUnlocked
+      file: ./src/questions.ts
