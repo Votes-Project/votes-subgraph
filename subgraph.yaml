@@ -84,6 +84,8 @@ dataSources:
         - VotesRoleGranted
         - VotesRoleRevoked
         - Transfer
+        - Vote
+        - VoteContract
       abis:
         - name: Votes
           file: ./abis/Votes.json
