@@ -240,3 +240,18 @@ type Transfer @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Vote @entity {
+ id: Bytes!
+ owner: Bytes
+ uri: String
+ contract: VoteContract
+}
+
+type VoteContract @entity {
+ id: Bytes!
+ name: String
+ symbol: String
+ totalSupply: BigInt!
+ votes: [Vote!]! @derivedFrom(field: "contract")
+}
