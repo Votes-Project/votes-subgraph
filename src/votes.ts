@@ -51,6 +51,7 @@ function getOrCreateToken(tokenId: BigInt, address: Address): Vote {
     vote = new Vote(id);
 
     vote.contract = address;
+    vote.tokenId = tokenId;
     let uri = instance.try_tokenURI(tokenId);
     if (uri.reverted) {
       log.info("tokenUri reverted", []);

@@ -243,6 +243,7 @@ type Transfer @entity(immutable: true) {
 
 type Vote @entity {
  id: Bytes!
+ tokenId: BigInt! # uint256
  owner: Bytes
  uri: String
  contract: VoteContract
