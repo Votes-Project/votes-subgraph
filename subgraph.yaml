@@ -29,6 +29,7 @@ dataSources:
         - TimeBufferUpdated
         - TreasuryAddressUpdated
         - Unpaused
+        - Auction
       abis:
         - name: Auction
           file: ./abis/Auction.json
