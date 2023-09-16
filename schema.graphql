@@ -5,6 +5,7 @@ type AuctionBid @entity(immutable: true) {
   amount: BigInt! # uint256
   extended: Boolean! # bool
   endTime: BigInt! # uint256
+  auction: Auction!
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -28,6 +29,18 @@ type AuctionSettled @entity(immutable: true) {
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
+}
+
+type Auction @entity {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  startTime: BigInt! # uint256
+  endTime: BigInt! # uint256
+  amount: BigInt! # uint256
+  extended: Boolean! # bool
+  bidder: Bytes # address
+  settled: Boolean! # bool
+  bids: [AuctionBid!]! @derivedFrom(field: "auction")
 }
 
 type DurationUpdated @entity(immutable: true) {
