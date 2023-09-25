@@ -1,4 +1,4 @@
-import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
   AuctionBid as AuctionBidEvent,
   AuctionCreated as AuctionCreatedEvent,
@@ -33,6 +33,7 @@ import {
   TimeBufferUpdated,
   TreasuryAddressUpdated,
   Unpaused,
+  Vote,
 } from "../generated/schema";
 
 export function handleAuctionBid(event: AuctionBidEvent): void {
@@ -85,12 +86,20 @@ export function handleAuctionCreated(event: AuctionCreatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let id = Bytes.fromI32(event.params.tokenId.toI32());
 
-  let auctionId = Bytes.fromI32(event.params.tokenId.toI32());
+  let vote = Vote.load(id);
+  if (vote == null) {
+    log.error("[handleAuctionCreated] Vote #{} not found. Hash: {}", [
+      id.toString(),
+      event.transaction.hash.toHex(),
+    ]);
+    return;
+  }
 
-  let auction = new Auction(auctionId);
+  let auction = new Auction(id);
 
-  auction.tokenId = event.params.tokenId;
+  auction.vote = id;
   auction.amount = BigInt.fromI32(0);
   auction.startTime = event.params.startTime;
   auction.endTime = event.params.endTime;
