@@ -33,7 +33,7 @@ type AuctionSettled @entity(immutable: true) {
 
 type Auction @entity {
   id: Bytes!
-  tokenId: BigInt! # uint256
+  vote: Vote!
   startTime: BigInt! # uint256
   endTime: BigInt! # uint256
   amount: BigInt! # uint256
