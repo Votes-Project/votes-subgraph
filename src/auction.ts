@@ -15,6 +15,7 @@ import {
   TimeBufferUpdated as TimeBufferUpdatedEvent,
   TreasuryAddressUpdated as TreasuryAddressUpdatedEvent,
   Unpaused as UnpausedEvent,
+  Auction as AuctionContracts,
 } from "../generated/Auction/Auction";
 import {
   AuctionBid,
@@ -34,7 +35,36 @@ import {
   TreasuryAddressUpdated,
   Unpaused,
   Vote,
+  AuctionContract,
 } from "../generated/schema";
+
+function getOrCreateContract(address: Address): AuctionContract {
+  let contract = AuctionContract.load(address);
+
+  if (!contract) {
+    let instance = AuctionContracts.bind(address);
+    contract = new AuctionContract(address);
+
+    let settings = instance.settings();
+    contract.treasury = settings.getTreasury();
+    contract.duration = settings.getDuration();
+    contract.timeBuffer = settings.getTimeBuffer();
+    contract.minBidIncrement = BigInt.fromI32(settings.getMinBidIncrement());
+    contract.launched = settings.getLaunched();
+    contract.reservePrice = settings.getReservePrice();
+    contract.reserveAddress = settings.getReserveAddress();
+    contract.raffleAddress = settings.getRaffleAddress();
+    contract.votesURI = settings.getVotesURI();
+    contract.flashVotesURI = settings.getFlashVotesURI();
+    contract.paused = instance.paused();
+    contract.votesToken = instance.votesToken();
+
+    contract.save();
+  }
+
+  return contract;
+}
+
 
 export function handleAuctionBid(event: AuctionBidEvent): void {
   let entity = new AuctionBid(
@@ -86,6 +116,7 @@ export function handleAuctionCreated(event: AuctionCreatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+
   let id = Bytes.fromI32(event.params.tokenId.toI32());
 
   let vote = Vote.load(id);
@@ -96,16 +127,26 @@ export function handleAuctionCreated(event: AuctionCreatedEvent): void {
     ]);
     return;
   }
+  vote.auction = id;
+  vote.save();
+
 
   let auction = new Auction(id);
-
+  auction.contract = event.address
   auction.vote = id;
   auction.amount = BigInt.fromI32(0);
   auction.startTime = event.params.startTime;
   auction.endTime = event.params.endTime;
   auction.extended = false;
   auction.settled = false;
+
   auction.save();
+
+  if (entity.tokenId.equals(BigInt.zero())) {
+    let contract = getOrCreateContract(event.address);
+    contract.launched = true;
+    contract.save();
+  }
 }
 
 export function handleAuctionSettled(event: AuctionSettledEvent): void {
@@ -149,6 +190,10 @@ export function handleDurationUpdated(event: DurationUpdatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.duration = event.params.duration;
+  contract.save();
+
 }
 
 export function handleMinBidIncrementPercentageUpdated(
@@ -164,6 +209,9 @@ export function handleMinBidIncrementPercentageUpdated(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.minBidIncrement = event.params.minBidIncrementPercentage;
+  contract.save();
 }
 
 export function handlePaused(event: PausedEvent): void {
@@ -177,6 +225,9 @@ export function handlePaused(event: PausedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.paused = true;
+  contract.save();
 }
 
 export function handleRaffleAddressUpdated(
@@ -192,6 +243,9 @@ export function handleRaffleAddressUpdated(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.raffleAddress = event.params.raffleAddress;
+  contract.save();
 }
 
 export function handleReserveAddressUpdated(
@@ -207,6 +261,9 @@ export function handleReserveAddressUpdated(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.reserveAddress = event.params.reserveAddress;
+  contract.save();
 }
 
 export function handleReservePriceUpdated(
@@ -222,6 +279,9 @@ export function handleReservePriceUpdated(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.reservePrice = event.params.reservePrice;
+  contract.save();
 }
 
 export function handleRoleAdminChanged(event: RoleAdminChangedEvent): void {
@@ -280,6 +340,9 @@ export function handleTimeBufferUpdated(event: TimeBufferUpdatedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.timeBuffer = event.params.timeBuffer;
+  contract.save();
 }
 
 export function handleTreasuryAddressUpdated(
@@ -295,6 +358,9 @@ export function handleTreasuryAddressUpdated(
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.treasury = event.params.treasuryAddress;
+  contract.save();
 }
 
 export function handleUnpaused(event: UnpausedEvent): void {
@@ -308,4 +374,7 @@ export function handleUnpaused(event: UnpausedEvent): void {
   entity.transactionHash = event.transaction.hash;
 
   entity.save();
+  let contract = getOrCreateContract(event.address);
+  contract.paused = false;
+  contract.save();
 }
