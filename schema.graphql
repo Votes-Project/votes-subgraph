@@ -40,7 +40,25 @@ type Auction @entity {
   extended: Boolean! # bool
   bidder: Bytes # address
   settled: Boolean! # bool
+  contract: AuctionContract
   bids: [AuctionBid!]! @derivedFrom(field: "auction")
+}
+
+type AuctionContract @entity {
+  id: Bytes!
+  treasury: Bytes! # address
+  duration: BigInt! # uint256
+  timeBuffer: BigInt! # uint256
+  minBidIncrement: BigInt! # uint256
+  launched: Boolean! # bool
+  reservePrice: BigInt! # uint256
+  reserveAddress: Bytes! # address
+  raffleAddress: Bytes! # address
+  votesURI: String!
+  flashVotesURI: String!
+  votesToken: Bytes! # address
+  paused: Boolean! # bool
+  auctions: [Auction!]! @derivedFrom(field: "contract")
 }
 
 type DurationUpdated @entity(immutable: true) {
@@ -257,6 +275,7 @@ type Transfer @entity(immutable: true) {
 type Vote @entity {
  id: Bytes!
  tokenId: BigInt! # uint256
+ auction: Auction
  owner: Bytes
  uri: String
  contract: VoteContract

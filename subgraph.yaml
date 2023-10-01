@@ -30,6 +30,7 @@ dataSources:
         - TreasuryAddressUpdated
         - Unpaused
         - Auction
+        - AuctionContract
       abis:
         - name: Auction
           file: ./abis/Auction.json
