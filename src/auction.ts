@@ -1,4 +1,4 @@
-import { BigInt, Bytes, log } from "@graphprotocol/graph-ts";
+import { BigInt, Bytes, log, Address } from "@graphprotocol/graph-ts";
 import {
   AuctionBid as AuctionBidEvent,
   AuctionCreated as AuctionCreatedEvent,
@@ -134,6 +134,7 @@ export function handleAuctionCreated(event: AuctionCreatedEvent): void {
   let auction = new Auction(id);
   auction.contract = event.address
   auction.vote = id;
+  auction.tokenId = event.params.tokenId;
   auction.amount = BigInt.fromI32(0);
   auction.startTime = event.params.startTime;
   auction.endTime = event.params.endTime;
