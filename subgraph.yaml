@@ -125,6 +125,8 @@ dataSources:
         - QuestionEdited
         - QuestionSubmitted
         - Unlocked
+        - Question
+        - QuestionsContract
       abis:
         - name: Questions
           file: ./abis/Questions.json
@@ -137,4 +139,6 @@ dataSources:
           handler: handleQuestionSubmitted
         - event: Unlocked(indexed uint256)
           handler: handleUnlocked
+        - event: RoleGranted(indexed bytes32,indexed address,indexed address)
+          handler: handleRoleGranted
       file: ./src/questions.ts
