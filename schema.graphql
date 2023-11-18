@@ -163,6 +163,22 @@ type Unpaused @entity(immutable: true) {
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type Question @entity {
+  id: Bytes!
+  tokenId: BigInt!
+  question: Bytes!
+  isLocked: Boolean!
+  contract: QuestionsContract!
+}
+
+type QuestionsContract @entity {
+  id: Bytes!
+  votesAddress: Bytes! # address
+  reviewerRole: Bytes! # bytes32
+  questions: [Question!]! @derivedFrom(field: "contract")
+}
+
 type QuestionEdited @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
