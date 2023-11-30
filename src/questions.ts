@@ -113,12 +113,14 @@ export function handleQuestionSubmitted(event: QuestionSubmittedEvent): void {
   entity.save();
 
   let questionId = Bytes.fromI32(event.params.tokenId.toI32());
+  let voteId = Bytes.fromI32(event.params.tokenId.toI32());
 
   let question = new Question(questionId);
 
   question.contract = event.address
-  question.tokenId = event.params.tokenId;
+  question.vote = voteId;
   question.question = event.params.question;
+  question.asker = event.transaction.from;
   question.isLocked = false;
 
   question.save();

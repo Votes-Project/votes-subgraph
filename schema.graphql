@@ -166,7 +166,8 @@ type Unpaused @entity(immutable: true) {
 
 type Question @entity {
   id: Bytes!
-  tokenId: BigInt!
+  vote: Vote!
+  asker: Bytes!
   question: Bytes!
   isLocked: Boolean!
   contract: QuestionsContract!
