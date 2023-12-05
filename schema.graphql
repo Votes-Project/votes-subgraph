@@ -164,12 +164,20 @@ type Unpaused @entity(immutable: true) {
   transactionHash: Bytes!
 }
 
+enum QuestionState {
+  Submitted
+  Approved
+  Used
+  Flagged
+}
+
 type Question @entity {
   id: Bytes!
   vote: Vote!
   asker: Bytes!
   question: Bytes!
-  isLocked: Boolean!
+  state: QuestionState!
+  modifiedTimestamp: BigInt! # uint256
   contract: QuestionsContract!
 }
 
@@ -184,12 +192,13 @@ type QuestionEdited @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
+  modifiedTimestamp: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type Locked @entity(immutable: true) {
+type QuestionApproved @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   blockNumber: BigInt!
@@ -201,18 +210,28 @@ type QuestionSubmitted @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
+  modifiedTimestamp: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
 
-type Unlocked @entity(immutable: true) {
+type QuestionUsed @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
 }
+
+type QuestionFlagged @entity(immutable: true) {
+  id: Bytes!
+  tokenId: BigInt! # uint256
+  blockNumber: BigInt!
+  blockTimestamp: BigInt!
+  transactionHash: Bytes!
+}
+
 type Approval @entity(immutable: true) {
   id: Bytes!
   owner: Bytes! # address

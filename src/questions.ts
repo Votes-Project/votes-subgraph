@@ -1,20 +1,29 @@
 import { Address, BigInt, Bytes, log } from "@graphprotocol/graph-ts";
 import {
-  Locked as LockedEvent,
   QuestionEdited as QuestionEditedEvent,
   QuestionSubmitted as QuestionSubmittedEvent,
-  Unlocked as UnlockedEvent,
+  QuestionApproved as QuestionApprovedEvent,
+  QuestionUsed as QuestionUsedEvent,
+  QuestionFlagged as QuestionFlaggedEvent,
   Questions as QuestionsContractInstance,
   RoleGranted as RoleGrantedEvent,
 } from "../generated/Questions/Questions";
 import {
-  Locked,
+  QuestionApproved,
   QuestionEdited,
   QuestionSubmitted,
-  Unlocked,
+  QuestionUsed,
+  QuestionFlagged,
   QuestionsContract,
   Question
 } from "../generated/schema";
+
+class QuestionState {
+  static Submitted: string = "Submitted";
+  static Approved: string = "Approved";
+  static Used: string = "Used";
+  static Flagged: string = "Flagged";
+}
 
 
 function getOrCreateContract(address: Address): QuestionsContract {
@@ -40,9 +49,8 @@ export function handleRoleGranted(event: RoleGrantedEvent): void {
 
 }
 
-
-export function handleLocked(event: LockedEvent): void {
-  let entity = new Locked(
+export function handleQuestionApproved(event: QuestionApprovedEvent): void {
+  let entity = new QuestionApproved(
     event.transaction.hash.concatI32(event.logIndex.toI32())
   );
 
@@ -59,13 +67,72 @@ export function handleLocked(event: LockedEvent): void {
   let question = Question.load(questionId);
 
   if (question == null) {
-    log.error("[handleLocked] Question not found with ID #{}. Hash: {}", [
+    log.error("[handleQuestionApproved] Question not found with ID #{}. Hash: {}", [
       questionId.toString(),
       event.transaction.hash.toHex(),
     ]);
     return;
   }
-  question.isLocked = true;
+
+  question.state = QuestionState.Approved;
+  question.save();
+}
+
+export function handleQuestionUsed(event: QuestionUsedEvent): void {
+  let entity = new QuestionUsed(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+
+  entity.tokenId = event.params.tokenId;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+
+  let questionId = Bytes.fromI32(event.params.tokenId.toI32());
+
+  let question = Question.load(questionId);
+
+  if (question == null) {
+    log.error("[handleQuestionUsed] Question not found with ID #{}. Hash: {}", [
+      questionId.toString(),
+      event.transaction.hash.toHex(),
+    ]);
+    return;
+  }
+
+  question.state = QuestionState.Used;
+  question.save();
+}
+
+export function handleQuestionFlagged(event: QuestionFlaggedEvent): void {
+  let entity = new QuestionFlagged(
+    event.transaction.hash.concatI32(event.logIndex.toI32())
+  );
+
+  entity.tokenId = event.params.tokenId;
+
+  entity.blockNumber = event.block.number;
+  entity.blockTimestamp = event.block.timestamp;
+  entity.transactionHash = event.transaction.hash;
+
+  entity.save();
+
+  let questionId = Bytes.fromI32(event.params.tokenId.toI32());
+
+  let question = Question.load(questionId);
+
+  if (question == null) {
+    log.error("[handleQuestionFlagged] Question not found with ID #{}. Hash: {}", [
+      questionId.toString(),
+      event.transaction.hash.toHex(),
+    ]);
+    return;
+  }
+
+  question.state = QuestionState.Flagged;
   question.save();
 }
 
@@ -95,6 +162,8 @@ export function handleQuestionEdited(event: QuestionEditedEvent): void {
     return;
   }
   question.question = event.params.question;
+  question.state = QuestionState.Submitted;
+  question.modifiedTimestamp = event.block.timestamp;
   question.save();
 
 }
@@ -121,36 +190,8 @@ export function handleQuestionSubmitted(event: QuestionSubmittedEvent): void {
   question.vote = voteId;
   question.question = event.params.question;
   question.asker = event.transaction.from;
-  question.isLocked = false;
+  question.modifiedTimestamp = event.block.timestamp;
+  question.state = QuestionState.Submitted;
 
-  question.save();
-}
-
-export function handleUnlocked(event: UnlockedEvent): void {
-  let entity = new Unlocked(
-    event.transaction.hash.concatI32(event.logIndex.toI32())
-  );
-  entity.tokenId = event.params.tokenId;
-
-  entity.blockNumber = event.block.number;
-  entity.blockTimestamp = event.block.timestamp;
-  entity.transactionHash = event.transaction.hash;
-
-  entity.save();
-
-
-  let questionId = Bytes.fromI32(event.params.tokenId.toI32());
-
-  let question = Question.load(questionId);
-
-  if (question == null) {
-    log.error("[handleQuestionUnlocked] Question not found with ID #{}. Hash: {}", [
-      questionId.toString(),
-      event.transaction.hash.toHex(),
-    ]);
-    return;
-  }
-
-  question.isLocked = false;
   question.save();
 }

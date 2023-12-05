@@ -113,9 +113,9 @@ dataSources:
     name: Questions
     network: goerli
     source:
-      address: "0xA22f7804C788272960F0B3E3Cfe2A139418D266e"
+      address: "0x7fBd86f05A3E505659E132dCa2Af85f9380dd16D"
       abi: Questions
-      startBlock: 9341259
+      startBlock: 10132717
     mapping:
       kind: ethereum/events
       apiVersion: 0.0.7
@@ -131,14 +131,16 @@ dataSources:
         - name: Questions
           file: ./abis/Questions.json
       eventHandlers:
-        - event: Locked(indexed uint256)
-          handler: handleLocked
         - event: QuestionEdited(indexed uint256,bytes)
           handler: handleQuestionEdited
         - event: QuestionSubmitted(indexed uint256,bytes)
           handler: handleQuestionSubmitted
-        - event: Unlocked(indexed uint256)
-          handler: handleUnlocked
+        - event: QuestionApproved(indexed uint256)
+          handler: handleQuestionApproved
+        - event: QuestionUsed(indexed uint256)
+          handler: handleQuestionUsed
+        - event: QuestionFlagged(indexed uint256)
+          handler: handleQuestionFlagged
         - event: RoleGranted(indexed bytes32,indexed address,indexed address)
           handler: handleRoleGranted
       file: ./src/questions.ts
