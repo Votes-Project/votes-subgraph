@@ -104,6 +104,7 @@ export function handleQuestionUsed(event: QuestionUsedEvent): void {
   }
 
   question.state = QuestionState.Used;
+  question.day = event.block.timestamp;
   question.save();
 }
 
