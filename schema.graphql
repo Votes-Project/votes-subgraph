@@ -186,6 +186,7 @@ type QuestionsContract @entity {
   id: Bytes!
   votesAddress: Bytes! # address
   reviewerRole: Bytes! # bytes32
+  lastUsedQuestion: Question
   questions: [Question!]! @derivedFrom(field: "contract")
 }
 
@@ -323,5 +324,6 @@ type VoteContract @entity {
  name: String
  symbol: String
  totalSupply: BigInt!
+ lastMintedVote: Vote
  votes: [Vote!]! @derivedFrom(field: "contract")
 }

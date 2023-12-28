@@ -107,6 +107,10 @@ export function handleQuestionUsed(event: QuestionUsedEvent): void {
   question.state = QuestionState.Used;
   question.day = event.block.timestamp;
   question.save();
+
+  let contract = getOrCreateContract(event.address);
+  contract.lastUsedQuestion = questionId;
+  contract.save();
 }
 
 export function handleQuestionFlagged(event: QuestionFlaggedEvent): void {
