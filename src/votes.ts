@@ -189,6 +189,7 @@ export function handleTransfer(event: TransferEvent): void {
 
   if (event.params.from == ZERO_ADDRESS) {
     contract.totalSupply = contract.totalSupply.plus(BigInt.fromI32(1));
+    contract.lastMintedVote = vote.id;
     contract.save();
   }
 
