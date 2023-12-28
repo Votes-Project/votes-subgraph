@@ -312,6 +312,7 @@ type Vote @entity {
  id: Bytes!
  tokenId: BigInt! # uint256
  auction: Auction
+ question: Question
  owner: Bytes
  uri: String
  contract: VoteContract!

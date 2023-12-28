@@ -15,7 +15,8 @@ import {
   QuestionUsed,
   QuestionFlagged,
   QuestionsContract,
-  Question
+  Question,
+  Vote
 } from "../generated/schema";
 
 class QuestionState {
@@ -182,17 +183,27 @@ export function handleQuestionSubmitted(event: QuestionSubmittedEvent): void {
 
   entity.save();
 
-  let questionId = Bytes.fromI32(event.params.tokenId.toI32());
-  let voteId = Bytes.fromI32(event.params.tokenId.toI32());
+  let id = Bytes.fromI32(event.params.tokenId.toI32());
 
-  let question = new Question(questionId);
+  let question = new Question(id);
 
   question.contract = event.address
-  question.vote = voteId;
+  question.vote = id;
   question.question = event.params.question;
   question.asker = event.transaction.from;
   question.modifiedTimestamp = event.block.timestamp;
   question.state = QuestionState.Submitted;
 
   question.save();
+
+  let vote = Vote.load(id);
+  if (vote == null) {
+    log.error("[handleQuestionSubmittec] Vote #{} not found. Hash: {}", [
+      id.toString(),
+      event.transaction.hash.toHex(),
+    ]);
+    return;
+  }
+  vote.question = id;
+  vote.save();
 }
