@@ -41,7 +41,7 @@ type Auction @entity {
   extended: Boolean! # bool
   bidder: Bytes # address
   settled: Boolean! # bool
-  contract: AuctionContract
+  contract: AuctionContract!
   bids: [AuctionBid!]! @derivedFrom(field: "auction")
 }
 
@@ -178,6 +178,7 @@ type Question @entity {
   question: Bytes!
   state: QuestionState!
   modifiedTimestamp: BigInt! # uint256
+  day: BigInt # uint256
   contract: QuestionsContract!
 }
 
@@ -192,7 +193,6 @@ type QuestionEdited @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
-  modifiedTimestamp: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -210,7 +210,6 @@ type QuestionSubmitted @entity(immutable: true) {
   id: Bytes!
   tokenId: BigInt! # uint256
   question: Bytes! # bytes
-  modifiedTimestamp: BigInt! # uint256
   blockNumber: BigInt!
   blockTimestamp: BigInt!
   transactionHash: Bytes!
@@ -315,7 +314,7 @@ type Vote @entity {
  auction: Auction
  owner: Bytes
  uri: String
- contract: VoteContract
+ contract: VoteContract!
 }
 
 type VoteContract @entity {
